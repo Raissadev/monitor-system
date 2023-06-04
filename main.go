@@ -1,9 +1,20 @@
 package main
 
-import "system/src/term"
+import (
+	"log"
+	"system/src/term"
+
+	ui "github.com/gizak/termui/v3"
+)
 
 var c term.Channel
+var r term.Render
 
 func main() {
-	c.Exec()
+	if err := ui.Init(); err != nil {
+		log.Fatalf("failed to initialize termui: %v", err)
+	}
+	defer ui.Close()
+
+	r.ProcsListRenderer()
 }

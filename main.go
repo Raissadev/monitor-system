@@ -11,6 +11,8 @@ import (
 var c sys.CPU
 var r term.Render
 var p sys.Proc
+var m sys.Memory
+var grid ui.Grid
 
 func main() {
 	if err := ui.Init(); err != nil {
@@ -18,8 +20,12 @@ func main() {
 	}
 	defer ui.Close()
 
-	c.Graph()
+	grid := ui.NewGrid()
+	grid.SetRect(0, 0, 50, 10)
+
+	// c.Graph()
 	p.ProcsListRenderer()
+	// m.Graph()
 
 	uiEvents := ui.PollEvents()
 	for {

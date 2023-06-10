@@ -31,8 +31,13 @@ func (c *CPU) Info() *CPU {
 	return c
 }
 
-func (c *CPU) updateInfo() {
-	total, idle := c.calcStats()
+func (c *CPU) update() {
+	var stat runtime.MemStats
+	runtime.ReadMemStats(&stat)
+
+	total := stat.Sys
+	idle := stat.Sys - stat.HeapInuse - stat.StackInuse
+
 	totalDelta := float64(total - c.pTotal)
 	idleDelta := float64(idle - c.pIdle)
 	cpuPercent := (1.0 - idleDelta/totalDelta) * 100
@@ -43,30 +48,19 @@ func (c *CPU) updateInfo() {
 	c.graph.Percent = int(cpuPercent)
 }
 
-func (c *CPU) calcStats() (total, idle uint64) {
-	var stat runtime.MemStats
-	runtime.ReadMemStats(&stat)
-
-	total = stat.Sys
-	idle = stat.Sys - stat.HeapInuse - stat.StackInuse
-	return total, idle
-}
-
 func (c *CPU) Graph() {
-	cpu := &CPU{
-		graph: widgets.NewGauge(),
-	}
-	cpu.graph.Title = "CPU Usage"
-	cpu.graph.Percent = 0
-	cpu.graph.SetRect(0, 0, 100, 5)
+	c.graph = widgets.NewGauge()
+	c.graph.Title = "CPU Usage"
+	c.graph.Percent = 0
+	c.graph.SetRect(0, 0, 100, 5)
 
-	ui.Render(cpu.graph)
+	ui.Render(c.graph)
 
 	ticker := time.NewTicker(1 * time.Second)
 
 	exit := make(chan struct{})
 
-	go cpu.converge(exit, ticker)
+	go c.converge(exit, ticker)
 
 }
 
@@ -74,7 +68,7 @@ func (c *CPU) converge(exit chan struct{}, ticker *time.Ticker) {
 	for {
 		select {
 		case <-ticker.C:
-			c.updateInfo()
+			c.update()
 			ui.Render(c.graph)
 		case <-exit:
 			ticker.Stop()

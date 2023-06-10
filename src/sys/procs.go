@@ -12,6 +12,7 @@ import (
 )
 
 type Proc struct {
+	graph *widgets.List
 }
 
 func (p *Proc) ProcessLs() ([]string, error) {
@@ -36,20 +37,21 @@ func (p *Proc) ProcessLs() ([]string, error) {
 }
 
 func (p *Proc) ProcsListRenderer() {
-	list := widgets.NewList()
-	list.Title = "Procs list"
-	list.Rows = []string{"loading..."}
-	list.TextStyle = ui.NewStyle(ui.ColorCyan)
-	list.WrapText = false
-	width, _ := ui.TerminalDimensions()
-	list.SetRect(0, 0, width, 24)
+	p.graph = widgets.NewList()
+	p.graph.Title = "Procs list"
+	p.graph.Rows = []string{"loading..."}
+	p.graph.TextStyle = ui.NewStyle(ui.ColorCyan)
+	p.graph.WrapText = false
 
-	ui.Render(list)
+	width, _ := ui.TerminalDimensions()
+	p.graph.SetRect(0, 0, width, 24)
+
+	ui.Render()
 
 	_procs := make(chan []string)
 
 	go p.sender(_procs)
-	go p.receiver(_procs, list)
+	go p.receiver(_procs)
 }
 
 func (p *Proc) sender(_p chan<- []string) {
@@ -69,13 +71,13 @@ func (p *Proc) sender(_p chan<- []string) {
 	}
 }
 
-func (p *Proc) receiver(_p <-chan []string, list *widgets.List) {
+func (p *Proc) receiver(_p <-chan []string) {
 	for {
 		select {
 		case procs := <-_p:
 			ui.Clear()
-			list.Rows = procs
-			ui.Render(list)
+			p.graph.Rows = procs
+			ui.Render(p.graph)
 		}
 	}
 }

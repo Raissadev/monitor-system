@@ -2,6 +2,7 @@ package sys
 
 import (
 	"log"
+	"math/rand"
 	"os/exec"
 	"strings"
 	"time"
@@ -40,35 +41,41 @@ func (p *Proc) ProcsListRenderer() {
 	list.Rows = []string{"loading..."}
 	list.TextStyle = ui.NewStyle(ui.ColorCyan)
 	list.WrapText = false
-
-	list.SetRect(0, 0, 80, 24)
+	width, _ := ui.TerminalDimensions()
+	list.SetRect(0, 0, width, 24)
 
 	ui.Render(list)
 
 	_procs := make(chan []string)
 
-	go func() {
-		for {
-			processes, err := p.ProcessLs()
-			if err != nil {
-				log.Printf("failed to get process list: %v", err)
-			}
+	go p.sender(_procs)
+	go p.receiver(_procs, list)
+}
 
-			_procs <- processes
-
-			time.Sleep(time.Second)
-
+func (p *Proc) sender(_p chan<- []string) {
+	for {
+		procs, err := p.ProcessLs()
+		if err != nil {
+			log.Printf("failed to get process list: %v", err)
 		}
-	}()
 
-	go func() {
-		for {
-			select {
-			case processes := <-_procs:
-				ui.Clear()
-				list.Rows = processes
-				ui.Render(list)
-			}
+		rand.Seed(time.Now().UnixNano())
+		rand.Shuffle(len(procs), func(i, j int) {
+			procs[i], procs[j] = procs[j], procs[i]
+		})
+
+		_p <- procs
+		time.Sleep(time.Second)
+	}
+}
+
+func (p *Proc) receiver(_p <-chan []string, list *widgets.List) {
+	for {
+		select {
+		case procs := <-_p:
+			ui.Clear()
+			list.Rows = procs
+			ui.Render(list)
 		}
-	}()
+	}
 }

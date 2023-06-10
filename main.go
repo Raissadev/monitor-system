@@ -8,7 +8,7 @@ import (
 	ui "github.com/gizak/termui/v3"
 )
 
-var c term.Channel
+var c sys.CPU
 var r term.Render
 var p sys.Proc
 
@@ -18,6 +18,7 @@ func main() {
 	}
 	defer ui.Close()
 
+	c.Graph()
 	p.ProcsListRenderer()
 
 	uiEvents := ui.PollEvents()

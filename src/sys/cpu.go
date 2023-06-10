@@ -50,6 +50,9 @@ func (c *CPU) update() int {
 
 func (c *CPU) AddGraph() (*widgets.Gauge, chan int) {
 	c.graph = widgets.NewGauge()
+	c.graph.BarColor = ui.ColorRed
+	c.graph.BorderStyle.Fg = ui.ColorWhite
+	c.graph.TitleStyle.Fg = ui.ColorCyan
 	c.graph.Title = "CPU Usage"
 	c.graph.Percent = 0
 

@@ -29,7 +29,7 @@ func main() {
 	mem, _ := m.AddGraph()
 
 	grid.Set(
-		ui.NewRow(0.3, ui.NewCol(0.5, cpu), ui.NewCol(0.5, mem)),
+		ui.NewRow(0.1, ui.NewCol(0.5, cpu), ui.NewCol(0.5, mem)),
 		ui.NewRow(1, procs),
 	)
 

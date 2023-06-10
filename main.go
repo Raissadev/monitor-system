@@ -2,13 +2,15 @@ package main
 
 import (
 	"log"
-	"system/src/term"
+	term "system/src/stats"
+	"system/src/sys"
 
 	ui "github.com/gizak/termui/v3"
 )
 
 var c term.Channel
 var r term.Render
+var p sys.Proc
 
 func main() {
 	if err := ui.Init(); err != nil {
@@ -16,5 +18,15 @@ func main() {
 	}
 	defer ui.Close()
 
-	r.ProcsListRenderer()
+	p.ProcsListRenderer()
+
+	uiEvents := ui.PollEvents()
+	for {
+		select {
+		case e := <-uiEvents:
+			if e.Type == ui.KeyboardEvent && e.ID == "q" {
+				return
+			}
+		}
+	}
 }

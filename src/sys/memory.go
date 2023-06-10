@@ -30,22 +30,21 @@ func (m *Memory) Info() *Memory {
 	return m
 }
 
-func (m *Memory) Graph() {
+func (m *Memory) AddGraph() (*widgets.Paragraph, chan string) {
 	m.graph = widgets.NewParagraph()
 	m.graph.Title = "Memory Usage"
 	m.graph.Text = ""
-	m.graph.SetRect(0, 0, 50, 5)
 
-	ui.Render(m.graph)
+	_msgs := make(chan string)
 
-	ticker := time.NewTicker(1 * time.Second)
-	exit := make(chan struct{})
+	go m.sender(_msgs)
+	go m.receiver(_msgs)
 
-	go m.update(exit, ticker)
+	return m.graph, _msgs
 
 }
 
-func (m *Memory) upInfo() string {
+func (m *Memory) update() string {
 	var stat runtime.MemStats
 	runtime.ReadMemStats(&stat)
 
@@ -60,15 +59,19 @@ func (m *Memory) upInfo() string {
 	return text
 }
 
-func (m *Memory) update(exit chan struct{}, ticker *time.Ticker) {
+func (m *Memory) sender(_m chan<- string) {
+	for {
+		_m <- m.update()
+		time.Sleep(time.Second)
+	}
+}
+
+func (m *Memory) receiver(_m <-chan string) {
 	for {
 		select {
-		case <-ticker.C:
-			m.graph.Text = m.upInfo()
+		case msgs := <-_m:
+			m.graph.Text = msgs
 			ui.Render(m.graph)
-		case <-exit:
-			ticker.Stop()
-			return
 		}
 	}
 }

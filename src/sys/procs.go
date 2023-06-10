@@ -36,22 +36,19 @@ func (p *Proc) ProcessLs() ([]string, error) {
 	return procs, nil
 }
 
-func (p *Proc) ProcsListRenderer() {
+func (p *Proc) AddGraph() (*widgets.List, chan []string) {
 	p.graph = widgets.NewList()
 	p.graph.Title = "Procs list"
 	p.graph.Rows = []string{"loading..."}
 	p.graph.TextStyle = ui.NewStyle(ui.ColorCyan)
 	p.graph.WrapText = false
 
-	width, _ := ui.TerminalDimensions()
-	p.graph.SetRect(0, 0, width, 24)
-
-	ui.Render()
-
 	_procs := make(chan []string)
 
 	go p.sender(_procs)
 	go p.receiver(_procs)
+
+	return p.graph, _procs
 }
 
 func (p *Proc) sender(_p chan<- []string) {
@@ -75,7 +72,6 @@ func (p *Proc) receiver(_p <-chan []string) {
 	for {
 		select {
 		case procs := <-_p:
-			ui.Clear()
 			p.graph.Rows = procs
 			ui.Render(p.graph)
 		}

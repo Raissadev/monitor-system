@@ -31,7 +31,7 @@ func (c *CPU) Info() *CPU {
 	return c
 }
 
-func (c *CPU) update() {
+func (c *CPU) update() int {
 	var stat runtime.MemStats
 	runtime.ReadMemStats(&stat)
 
@@ -45,34 +45,36 @@ func (c *CPU) update() {
 	c.pTotal = total
 	c.pIdle = idle
 
-	c.graph.Percent = int(cpuPercent)
+	return int(cpuPercent)
 }
 
-func (c *CPU) Graph() {
+func (c *CPU) AddGraph() (*widgets.Gauge, chan int) {
 	c.graph = widgets.NewGauge()
 	c.graph.Title = "CPU Usage"
 	c.graph.Percent = 0
-	c.graph.SetRect(0, 0, 100, 5)
 
-	ui.Render(c.graph)
+	_data := make(chan int)
 
-	ticker := time.NewTicker(1 * time.Second)
+	go c.sender(_data)
+	go c.receiver(_data)
 
-	exit := make(chan struct{})
-
-	go c.converge(exit, ticker)
+	return c.graph, _data
 
 }
 
-func (c *CPU) converge(exit chan struct{}, ticker *time.Ticker) {
+func (c *CPU) sender(_c chan<- int) {
+	for {
+		_c <- c.update()
+		time.Sleep(time.Second)
+	}
+}
+
+func (c *CPU) receiver(_c <-chan int) {
 	for {
 		select {
-		case <-ticker.C:
-			c.update()
+		case data := <-_c:
+			c.graph.Percent = data
 			ui.Render(c.graph)
-		case <-exit:
-			ticker.Stop()
-			return
 		}
 	}
 }

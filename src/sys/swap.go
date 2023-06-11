@@ -95,9 +95,13 @@ func (s *Swap) receiver(_s <-chan float64) {
 }
 
 func (s *Swap) pseudoData() [][]float64 {
+	us, err := s.update()
+	if err != nil {
+		log.Fatalf("failed to get swap usage information: %v", err)
+	}
 	n := 220
 	data := make([][]float64, 2)
 	data[0] = make([]float64, n)
-	data[1] = make([]float64, n)
+	data[1] = make([]float64, int(us))
 	return data
 }

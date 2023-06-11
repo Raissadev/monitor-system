@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	term "system/src/stats"
 	"system/src/sys"
 
@@ -45,6 +46,8 @@ func main() {
 		select {
 		case e := <-uiEvents:
 			if e.Type == ui.KeyboardEvent && e.ID == "q" {
+				ui.Close()
+				os.Exit(0)
 				return
 			}
 		}

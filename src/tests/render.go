@@ -1,4 +1,4 @@
-package stats
+package tests
 
 import (
 	"system/src/sys"

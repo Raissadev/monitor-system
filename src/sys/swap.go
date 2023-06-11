@@ -23,6 +23,8 @@ func (s *Swap) AddGraph() (*widgets.Plot, chan float64) {
 	s.graph.Data = s.pseudoData()
 	s.graph.SetRect(0, 0, 50, 10)
 
+	s.graph.LineColors[0] = ui.Color(13)
+
 	_data := make(chan float64)
 
 	go s.sender(_data)

@@ -3,14 +3,12 @@ package main
 import (
 	"log"
 	"os"
-	term "system/src/stats"
 	"system/src/sys"
 
 	ui "github.com/gizak/termui/v3"
 )
 
 var c sys.CPU
-var r term.Render
 var p sys.Proc
 var m sys.Memory
 var d sys.Disk

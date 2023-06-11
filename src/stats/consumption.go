@@ -5,10 +5,10 @@ import (
 	"runtime"
 )
 
-type Bench struct {
+type Consumption struct {
 }
 
-func (b *Bench) view() {
+func (b *Consumption) memory() {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
 

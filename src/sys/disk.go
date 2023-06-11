@@ -14,7 +14,7 @@ import (
 
 type Disk struct {
 	Usage int
-	graph *widgets.BarChart
+	graph *widgets.Gauge
 }
 
 func (d *Disk) update(path string) (int, error) {
@@ -40,14 +40,15 @@ func (d *Disk) update(path string) (int, error) {
 	return usage, nil
 }
 
-func (d *Disk) AddGraph() (*widgets.BarChart, chan []float64) {
-	d.graph = widgets.NewBarChart()
+func (d *Disk) AddGraph() (*widgets.Gauge, chan int) {
+	d.graph = widgets.NewGauge()
+	d.graph.BarColor = ui.Color(300)
+	d.graph.BorderStyle.Fg = ui.ColorWhite
+	d.graph.TitleStyle.Fg = ui.ColorCyan
 	d.graph.Title = "Disk Usage"
-	d.graph.Labels = []string{"Usage"}
-	d.graph.TitleStyle.Fg = ui.ColorWhite
-	d.graph.SetRect(0, 0, 50, 10)
+	d.graph.Percent = 0
 
-	_data := make(chan []float64)
+	_data := make(chan int)
 
 	go d.sender(_data)
 	go d.receiver(_data)
@@ -55,22 +56,22 @@ func (d *Disk) AddGraph() (*widgets.BarChart, chan []float64) {
 	return d.graph, _data
 }
 
-func (d *Disk) sender(_d chan<- []float64) {
+func (d *Disk) sender(_d chan<- int) {
 	for {
 		usage, err := d.update("/")
 		if err != nil {
 			log.Fatalf("failed to get disk usage information: %v", err)
 		}
-		_d <- []float64{float64(usage)}
+		_d <- usage
 		time.Sleep(time.Second)
 	}
 }
 
-func (d *Disk) receiver(_d <-chan []float64) {
+func (d *Disk) receiver(_d <-chan int) {
 	for {
 		select {
-		case us := <-_d:
-			d.graph.Data = us
+		case data := <-_d:
+			d.graph.Percent = data
 			ui.Render(d.graph)
 		}
 	}

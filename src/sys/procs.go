@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os/exec"
 	"strings"
+	"text/tabwriter"
 	"time"
 
 	ui "github.com/gizak/termui/v3"
@@ -33,7 +34,23 @@ func (p *Proc) ProcessLs() ([]string, error) {
 		}
 	}
 
-	return procs, nil
+	var alg strings.Builder
+	w := tabwriter.NewWriter(&alg, 0, 0, 2, ' ', 0)
+	for _, proc := range procs {
+		fields := strings.Fields(proc)
+		for i, field := range fields {
+			if i == (len(fields) - 1) {
+				_, _ = w.Write([]byte(field))
+			} else {
+				_, _ = w.Write([]byte(field + "\t"))
+			}
+		}
+		_, _ = w.Write([]byte("\n"))
+	}
+	_ = w.Flush()
+	algp := strings.Split(alg.String(), "\n")
+
+	return algp, nil
 }
 
 func (p *Proc) AddGraph() (*widgets.List, chan []string) {

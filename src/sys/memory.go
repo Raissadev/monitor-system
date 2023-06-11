@@ -30,7 +30,7 @@ func (m *Memory) Info() *Memory {
 	return m
 }
 
-func (m *Memory) AddGraph() (*widgets.Paragraph, chan string) {
+func (m *Memory) AddParagraph() (*widgets.Paragraph, chan string) {
 	m.graph = widgets.NewParagraph()
 	m.graph.Title = "Memory Usage"
 	m.graph.Text = ""

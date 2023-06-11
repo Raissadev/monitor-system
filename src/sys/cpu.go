@@ -48,7 +48,7 @@ func (c *CPU) update() int {
 	return int(cpuPercent)
 }
 
-func (c *CPU) AddGraph() (*widgets.Gauge, chan int) {
+func (c *CPU) AddGauge() (*widgets.Gauge, chan int) {
 	c.graph = widgets.NewGauge()
 	c.graph.BarColor = ui.Color(300)
 	c.graph.BorderStyle.Fg = ui.ColorWhite

@@ -53,7 +53,7 @@ func (p *Proc) ProcessLs() ([]string, error) {
 	return algp, nil
 }
 
-func (p *Proc) AddGraph() (*widgets.List, chan []string) {
+func (p *Proc) AddList() (*widgets.List, chan []string) {
 	p.graph = widgets.NewList()
 	p.graph.Title = "Procs list"
 	p.graph.Rows = []string{"loading..."}

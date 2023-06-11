@@ -40,7 +40,7 @@ func (d *Disk) update(path string) (int, error) {
 	return usage, nil
 }
 
-func (d *Disk) AddGraph() (*widgets.Gauge, chan int) {
+func (d *Disk) AddGauge() (*widgets.Gauge, chan int) {
 	d.graph = widgets.NewGauge()
 	d.graph.BarColor = ui.Color(300)
 	d.graph.BorderStyle.Fg = ui.ColorWhite

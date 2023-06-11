@@ -17,7 +17,7 @@ type Swap struct {
 	graph *widgets.Plot
 }
 
-func (s *Swap) AddGraph() (*widgets.Plot, chan float64) {
+func (s *Swap) AddPlot() (*widgets.Plot, chan float64) {
 	s.graph = widgets.NewPlot()
 	s.graph.Title = "Swap Usage"
 	s.graph.Data = s.pseudoData()

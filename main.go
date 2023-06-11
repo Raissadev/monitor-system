@@ -13,6 +13,7 @@ var p sys.Proc
 var m sys.Memory
 var d sys.Disk
 var s sys.Swap
+var n sys.Network
 var grid ui.Grid
 
 func main() {
@@ -30,11 +31,13 @@ func main() {
 	mem, _ := m.AddParagraph()
 	ds, _ := d.AddGauge()
 	sw, _ := s.AddPlot()
+	nw, _ := n.AddPlot()
 
 	grid.Set(
-		ui.NewRow(0.1, ui.NewCol(0.3, cpu), ui.NewCol(0.3, mem), ui.NewCol(0.3, ds)),
+		ui.NewRow(.1, ui.NewCol(0.3, cpu), ui.NewCol(0.3, mem), ui.NewCol(0.3, ds)),
 		ui.NewRow(.2, sw),
-		ui.NewRow(.7, procs),
+		ui.NewRow(.2, nw),
+		ui.NewRow(.5, procs),
 	)
 
 	ui.Render(grid)

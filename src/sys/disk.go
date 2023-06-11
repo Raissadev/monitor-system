@@ -29,7 +29,6 @@ func (d *Disk) update(path string) (int, error) {
 		return 0, fmt.Errorf("unexpected output format")
 	}
 
-	fmt.Println(lines[1])
 	str := strings.TrimSpace(lines[1])
 	str = strings.TrimSuffix(str, "%")
 	usage, err := strconv.Atoi(str)
@@ -42,7 +41,7 @@ func (d *Disk) update(path string) (int, error) {
 
 func (d *Disk) AddGauge() (*widgets.Gauge, chan int) {
 	d.graph = widgets.NewGauge()
-	d.graph.BarColor = ui.Color(300)
+	d.graph.BarColor = ui.Color(50)
 	d.graph.BorderStyle.Fg = ui.ColorWhite
 	d.graph.TitleStyle.Fg = ui.ColorCyan
 	d.graph.Title = "Disk Usage"

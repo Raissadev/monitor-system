@@ -38,19 +38,19 @@ func (c *CPU) update() int {
 	total := stat.Sys
 	idle := stat.Sys - stat.HeapInuse - stat.StackInuse
 
-	totalDelta := float64(total - c.pTotal)
-	idleDelta := float64(idle - c.pIdle)
-	cpuPercent := (1.0 - idleDelta/totalDelta) * 100
+	totalΔ := float64(total - c.pTotal)
+	idleΔ := float64(idle - c.pIdle)
+	percent := (1.0 - idleΔ/totalΔ) * 100
 
 	c.pTotal = total
 	c.pIdle = idle
 
-	return int(cpuPercent)
+	return int(percent)
 }
 
 func (c *CPU) AddGauge() (*widgets.Gauge, chan int) {
 	c.graph = widgets.NewGauge()
-	c.graph.BarColor = ui.Color(300)
+	c.graph.BarColor = ui.Color(50)
 	c.graph.BorderStyle.Fg = ui.ColorWhite
 	c.graph.TitleStyle.Fg = ui.ColorCyan
 	c.graph.Title = "CPU Usage"

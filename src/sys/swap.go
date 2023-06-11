@@ -101,9 +101,9 @@ func (s *Swap) pseudoData() [][]float64 {
 	if err != nil {
 		log.Fatalf("failed to get swap usage information: %v", err)
 	}
-	n := 220
+	ŋ := 220
 	data := make([][]float64, 2)
-	data[0] = make([]float64, n)
+	data[0] = make([]float64, ŋ)
 	data[1] = make([]float64, int(us))
 	return data
 }

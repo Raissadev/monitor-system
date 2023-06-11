@@ -1,5 +1,17 @@
-FROM debian:latest
+FROM golang:1.19-alpine AS build
 
-COPY . .
+LABEL project="42"
 
-ENTRYPOINT [ "/bin/exec" ]
+ENV PATH="$PATH:$(go env GOPATH)/bin"
+ENV CGO_ENABLED 0
+ENV GOPATH /go
+ENV GOCACHE /go-build
+ENV GOOS linux
+
+WORKDIR /go/src
+
+COPY ./ ./
+
+RUN go build -o ./bin/kenbunshoku-haki
+
+ENTRYPOINT ["/go/src/bin/kenbunshoku-haki"]

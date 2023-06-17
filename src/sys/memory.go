@@ -7,6 +7,7 @@ import (
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
+	"github.com/shirou/gopsutil/mem"
 )
 
 type Memory struct {
@@ -45,16 +46,12 @@ func (m *Memory) AddParagraph() (*widgets.Paragraph, chan string) {
 }
 
 func (m *Memory) update() string {
-	var stat runtime.MemStats
-	runtime.ReadMemStats(&stat)
+	memInfo, _ := mem.VirtualMemory()
 
-	used := stat.HeapInuse + stat.StackInuse
-	total := stat.Sys
+	totalGB := float64(memInfo.Total) / (1024 * 1024 * 1024)
+	usedGB := float64(memInfo.Used) / (1024 * 1024 * 1024)
 
-	usedMB := float64(used) / 1024 / 1024
-	totalMB := float64(total) / 1024 / 1024
-
-	text := fmt.Sprintf("Used: %.2f MB\nTotal: %.2f MB", usedMB, totalMB)
+	text := fmt.Sprintf("Used: %.2f GB\nTotal: %.2f GB", usedGB, totalGB)
 
 	return text
 }

@@ -14,18 +14,15 @@ import (
 
 type Swap struct {
 	Usage int
-	graph *widgets.Plot
+	Total int
+	graph *widgets.Paragraph
 }
 
-func (s *Swap) AddPlot() (*widgets.Plot, chan float64) {
-	s.graph = widgets.NewPlot()
+func (s *Swap) AddPlot() (*widgets.Paragraph, chan Swap) {
+	s.graph = widgets.NewParagraph()
 	s.graph.Title = "Swap Usage"
-	s.graph.Data = s.pseudoData()
-	s.graph.SetRect(0, 0, 50, 10)
 
-	s.graph.LineColors[0] = ui.Color(13)
-
-	_data := make(chan float64)
+	_data := make(chan Swap)
 
 	go s.sender(_data)
 	go s.receiver(_data)
@@ -34,76 +31,56 @@ func (s *Swap) AddPlot() (*widgets.Plot, chan float64) {
 
 }
 
-func (s *Swap) update() (float64, error) {
-	out, err := exec.Command("free").Output()
+func (s *Swap) update() (*Swap, error) {
+	out, err := exec.Command("free", "-m").Output()
 	if err != nil {
-		return 0, fmt.Errorf("failed to exec command free: %v", err)
+		return s, fmt.Errorf("failed to exec command free: %v", err)
 	}
 
 	lines := strings.Split(string(out), "\n")
 
 	if len(lines) < 3 {
-		return 0, fmt.Errorf("unexpected format output")
+		return s, fmt.Errorf("unexpected format output")
 	}
 
 	sLine := strings.TrimSpace(lines[2])
 	fields := strings.Fields(sLine)
 	if len(fields) < 3 {
-		return 0, fmt.Errorf("unexpected format output")
+		return s, fmt.Errorf("unexpected format output")
 	}
-	stotal, err := strconv.ParseInt(fields[1], 10, 64)
+	totalΔ, err := strconv.ParseInt(fields[1], 10, 64)
 	if err != nil {
-		return 0, fmt.Errorf("failed to parse total swap: %v", err)
+		return s, fmt.Errorf("failed to parse total swap: %v", err)
 	}
 
-	usage, err := strconv.ParseInt(fields[2], 10, 64)
+	usageΔ, err := strconv.ParseInt(fields[2], 10, 64)
 	if err != nil {
-		return 0, fmt.Errorf("failed to parse used swap: %v", err)
+		return s, fmt.Errorf("failed to parse used swap: %v", err)
 	}
 
-	swap := float64(float64(usage) / float64(stotal) * 100)
+	s.Usage = int(usageΔ)
+	s.Total = int(totalΔ)
 
-	return swap, nil
+	return s, nil
 }
 
-func (s *Swap) sender(_s chan<- float64) {
+func (s *Swap) sender(_s chan<- Swap) {
 	for {
 		usage, err := s.update()
 		if err != nil {
 			log.Fatalf("failed to get swap usage information: %v", err)
 		}
-		_s <- usage
+		_s <- *usage
 		time.Sleep(time.Second)
 	}
 }
 
-func (s *Swap) receiver(_s <-chan float64) {
-	i := 0
-
+func (s *Swap) receiver(_s <-chan Swap) {
 	for {
 		select {
 		case data := <-_s:
-			s.graph.Data[0] = append(s.graph.Data[0], float64(i))
-			s.graph.Data[1] = append(s.graph.Data[1], data)
-			i++
-
-			if i > 220 {
-				s.graph.Data[0] = s.graph.Data[0][1:]
-				s.graph.Data[1] = s.graph.Data[1][1:]
-			}
+			s.graph.Text = fmt.Sprintf("Used: %d MB\nTotal: %d MB", data.Usage, data.Total)
 			ui.Render(s.graph)
 		}
 	}
-}
-
-func (s *Swap) pseudoData() [][]float64 {
-	us, err := s.update()
-	if err != nil {
-		log.Fatalf("failed to get swap usage information: %v", err)
-	}
-	ŋ := 220
-	data := make([][]float64, 2)
-	data[0] = make([]float64, ŋ)
-	data[1] = make([]float64, int(us))
-	return data
 }

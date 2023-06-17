@@ -42,9 +42,6 @@ func (c *CPU) update() int {
 	idleΔ := float64(idle - c.pIdle)
 	percent := (1.0 - idleΔ/totalΔ) * 100
 
-	c.pTotal = total
-	c.pIdle = idle
-
 	return int(percent)
 }
 

@@ -19,9 +19,9 @@ func (n *Network) AddPlot() (*widgets.Plot, chan []float64) {
 	n.graph = widgets.NewPlot()
 	n.graph.Title = "Network data"
 	n.graph.DataLabels = []string{"Packets"}
-	n.graph.Data = n.pseudoData()
+	n.graph.Data = make([][]float64, 2)
 	n.graph.SetRect(0, 0, 50, 10)
-
+	n.graph.Marker = widgets.MarkerDot
 	n.graph.LineColors[0] = ui.Color(13)
 
 	_data := make(chan []float64)
@@ -73,7 +73,7 @@ func (n *Network) receiver(_n <-chan []float64) {
 		select {
 		case data := <-_n:
 			n.graph.Data[0] = append(n.graph.Data[0], float64(i))
-			n.graph.Data[1] = append(data)
+			n.graph.Data[1] = append(n.graph.Data[1], data...)
 			i++
 
 			if i > 220 {

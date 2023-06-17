@@ -12,6 +12,6 @@ WORKDIR /go/src
 
 COPY ./ ./
 
-RUN go build -o ./bin/kenbunshoku-haki
+RUN go build -o ./src/bin/kenbunshoku-haki
 
 ENTRYPOINT ["/go/src/bin/kenbunshoku-haki"]

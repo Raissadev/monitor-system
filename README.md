@@ -26,9 +26,9 @@ $ make install
 
 Or build (root haha)
 ```
-$ go build -o ./bin/kenbunshoku-haki
+$ go build -o ./src/bin/kenbunshoku-haki
 
-$ ln -s ./bin/kenbunshoku-haki /usr/bin/kenbunshoku-haki
+$ ln -s ./src/bin/kenbunshoku-haki /usr/bin/kenbunshoku-haki
 ```
 
 

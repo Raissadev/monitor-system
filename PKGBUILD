@@ -18,5 +18,5 @@ build() {
 
 package() {
     install -Dm755 "$srcdir/bin/kenbunshoku-haki" "$pkgdir/usr/bin/kenbunshoku-haki"
-    img2txt ./etc/mug.webp
+    img2txt ./etc/mug.png
 }

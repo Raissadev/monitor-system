@@ -12,6 +12,7 @@ var m sys.Memory
 var d sys.Disk
 var s sys.Swap
 var n sys.Network
+var ek sys.EntropyKernel
 var grid ui.Grid
 var flg Flags
 
@@ -54,9 +55,13 @@ func (g *Graph) Define(flags []string, grid *ui.Grid) *ui.Grid {
 			nw, _ := n.AddPlot()
 			rows = append(rows, ui.NewRow(.3, nw))
 		}
-		if flg.Contains(flags, "procs") {
+		if flg.Contains(flags, "procs") || flg.Contains(flags, "process") {
 			procs, _ := p.AddList()
 			rows = append(rows, ui.NewRow(.6, procs))
+		}
+		if flg.Contains(flags, "entropy-kernel") || flg.Contains(flags, "entropy") {
+			ek, _ := ek.AddPlot()
+			rows = append(rows, ui.NewRow(.6, ek))
 		}
 		grid.Set(flg.InterfaceSlice(rows)...)
 	}

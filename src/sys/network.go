@@ -56,6 +56,7 @@ func (n *Network) update() ([]float64, error) {
 
 	return data, nil
 }
+
 func (n *Network) sender(_n chan<- []float64) {
 	for {
 		data, err := n.update()

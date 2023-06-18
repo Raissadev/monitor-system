@@ -24,7 +24,7 @@ func (f *Flags) ManArgs() []string {
 
 	// ? acronyms
 	flag.BoolVar(help, "h", false, "Display help message")
-	flag.StringVar(specs, "s", "", "Specify a comma-separated list of specifications")
+	flag.StringVar(specs, "s", "", "Specify a comma-separated list of specifications (cpu,netrwork,swap,memory,procs,disk,entropy-kernel)")
 
 	flag.Parse()
 
@@ -48,10 +48,12 @@ func (f *Flags) ManArgs() []string {
 				args = append(args, "swap")
 			case "memory":
 				args = append(args, "memory")
-			case "procs":
+			case "procs", "processes":
 				args = append(args, "procs")
 			case "disk":
 				args = append(args, "disk")
+			case "entropy", "entropy-kernel":
+				args = append(args, "entropy-kernel")
 			default:
 				return args
 			}

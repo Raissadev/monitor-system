@@ -22,6 +22,10 @@ func (f *Flags) ManArgs() []string {
 	help := flag.Bool("help", false, "Display help message")
 	specs := flag.String("show", "", "Specify a comma-separated list of specifications")
 
+	// ? acronyms
+	flag.BoolVar(help, "h", false, "Display help message")
+	flag.StringVar(specs, "s", "", "Specify a comma-separated list of specifications")
+
 	flag.Parse()
 
 	if *help {
@@ -32,8 +36,8 @@ func (f *Flags) ManArgs() []string {
 
 	switch {
 	case *specs != "":
-		specifications := strings.Split(*specs, ",")
-		for _, spec := range specifications {
+		stats := strings.Split(*specs, ",")
+		for _, spec := range stats {
 			switch spec {
 			case "cpu":
 				args = append(args, "cpu")

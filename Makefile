@@ -13,7 +13,7 @@ build:
 
 install:
 	$(GOBUILD) -o ./src/bin/$(BUILD_TARGET)
-	sudo ln -s "$(CURDIR)/src/bin/$(BUILD_TARGET)" $(INSTALL_PATH)
+	sudo ln -sf "$(CURDIR)/src/bin/$(BUILD_TARGET)" $(INSTALL_PATH)
 	img2txt ./etc/mug.png
 
 clean:

@@ -10,7 +10,7 @@ ENV GOOS linux
 
 WORKDIR /go/src
 
-COPY ./ ./
+COPY . .
 
 RUN go build -o ./src/bin/kenbunshoku-haki
 

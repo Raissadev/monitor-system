@@ -1,4 +1,5 @@
 /src/bin/kenbunshoku-haki
+/pkgs/*
 /pkg/*
 /kenbunshoku-haki-1.0-1-x86_64.pkg.tar.zst
 /**/kenbunshoku-haki-1.0.tar.gz

@@ -1,12 +1,13 @@
 package sys
 
 import (
-	"math"
+	"fmt"
 	"runtime"
 	"time"
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
+	"github.com/shirou/gopsutil/cpu"
 )
 
 type CPU struct {
@@ -32,18 +33,20 @@ func (c *CPU) Info() *CPU {
 	return c
 }
 
-func (c *CPU) update() int {
-	var stat runtime.MemStats
-	runtime.ReadMemStats(&stat)
+// ? Consumption of all cores
+func (c *CPU) update() (int, error) {
+	resps, err := cpu.Percent(time.Second, false)
 
-	total := stat.Sys
-	idle := stat.Sys - stat.HeapInuse - stat.StackInuse
+	if err != nil {
+		return 0, fmt.Errorf("failed get data of cpu: %v", err)
+	}
 
-	totalΔ := float64(total - c.pTotal)
-	idleΔ := float64(idle - c.pIdle)
-	percent := math.Abs(1.0-idleΔ/totalΔ) * 100
+	var pΔ float64
+	for _, percentage := range resps {
+		pΔ += percentage
+	}
 
-	return int(percent)
+	return int(pΔ), nil
 }
 
 func (c *CPU) AddGauge() (*widgets.Gauge, chan int) {
@@ -65,7 +68,8 @@ func (c *CPU) AddGauge() (*widgets.Gauge, chan int) {
 
 func (c *CPU) sender(_c chan<- int) {
 	for {
-		_c <- c.update()
+		data, _ := c.update()
+		_c <- data
 		time.Sleep(time.Second)
 	}
 }

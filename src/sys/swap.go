@@ -79,7 +79,7 @@ func (s *Swap) receiver(_s <-chan Swap) {
 	for {
 		select {
 		case data := <-_s:
-			s.graph.Text = fmt.Sprintf("Used: %d MB\nTotal: %d MB", data.Usage, data.Total)
+			s.graph.Text = fmt.Sprintf("Used: %d MB (∂)\nTotal: %d MB (∑)", data.Usage, data.Total)
 			ui.Render(s.graph)
 		}
 	}

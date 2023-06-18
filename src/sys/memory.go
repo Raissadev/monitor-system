@@ -2,6 +2,7 @@ package sys
 
 import (
 	"fmt"
+	"math"
 	"runtime"
 	"time"
 
@@ -48,10 +49,10 @@ func (m *Memory) AddParagraph() (*widgets.Paragraph, chan string) {
 func (m *Memory) update() string {
 	memInfo, _ := mem.VirtualMemory()
 
-	totalGB := float64(memInfo.Total) / (1024 * 1024 * 1024)
-	usedGB := float64(memInfo.Used) / (1024 * 1024 * 1024)
+	partialGB := float64(memInfo.Total) / math.Pow(1024, 3)
+	sigmaGB := float64(memInfo.Used) / math.Pow(1024, 3)
 
-	text := fmt.Sprintf("Used: %.2f GB\nTotal: %.2f GB", usedGB, totalGB)
+	text := fmt.Sprintf("Used: %.2f GB (∂)\nTotal: %.2f GB (∑)", sigmaGB, partialGB)
 
 	return text
 }

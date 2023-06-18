@@ -8,8 +8,8 @@ url="https://github.com/Raissadev/monitor-system"
 license=(GPL3)
 depends=('go' 'libcaca')
 
-source=("https://github.com/Raissadev/monitor-system/releases/download/v1.0/kenbunshoku-haki-$pkgver.tar.gz")
-sha256sums=('17c1f40139b235da7d7dc9b62e453d6c1d0292eccd2248c45bf37d902a495afa')
+source=("https://github.com/Raissadev/monitor-system/releases/download/v$pkgver/kenbunshoku-haki-$pkgver.tar.gz")
+sha256sums=('55da8c3e967190c44bada09d57221b9e6e15614244795d208fd5a1b82ed0120d')
 
 build() {
     cd ..

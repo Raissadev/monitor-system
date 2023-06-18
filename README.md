@@ -16,7 +16,7 @@ Kenbunshoku Haki (observation haki for the intimate haha) is a tool to monitor s
 ## Installation
 For arch derivatives (pending)
 ```
-$ yay -Syu kenbunshoku-haki
+$ yay -S kenbunshoku-haki
 ```
 
 Or the easiest way

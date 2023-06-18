@@ -9,11 +9,11 @@ INSTALL_PATH := /usr/bin/$(BUILD_TARGET)
 all: build
 
 build:
-	$(GOBUILD) -o ./bin/$(BUILD_TARGET)
+	$(GOBUILD) -o ./src/bin/$(BUILD_TARGET)
 
 install:
-	$(GOBUILD) -o ./bin/$(BUILD_TARGET)
-	sudo ln -s "$(CURDIR)/bin/$(BUILD_TARGET)" $(INSTALL_PATH)
+	$(GOBUILD) -o ./src/bin/$(BUILD_TARGET)
+	sudo ln -s "$(CURDIR)/src/bin/$(BUILD_TARGET)" $(INSTALL_PATH)
 	img2txt ./etc/mug.png
 
 clean:

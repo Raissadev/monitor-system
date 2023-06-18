@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"system/src/cli"
 	"system/src/sys"
 	"time"
 
@@ -19,8 +20,16 @@ var d sys.Disk
 var s sys.Swap
 var n sys.Network
 var grid ui.Grid
+var flg cli.Flags
+var gp cli.Graph
 
 func main() {
+	flags := flg.ManArgs()
+
+	if flg.Contains(flags, "help") {
+		return
+	}
+
 	if err := ui.Init(); err != nil {
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
@@ -30,18 +39,7 @@ func main() {
 	grid := ui.NewGrid()
 	grid.SetRect(0, 0, width, height)
 
-	procs, _ := p.AddList()
-	cpu, _ := c.AddGauge()
-	mem, _ := m.AddParagraph()
-	ds, _ := d.AddGauge()
-	sw, _ := s.AddPlot()
-	nw, _ := n.AddPlot()
-
-	grid.Set(
-		ui.NewRow(.1, ui.NewCol(0.33, cpu), ui.NewCol(0.17, mem), ui.NewCol(0.17, sw), ui.NewCol(0.33, ds)),
-		ui.NewRow(.3, nw),
-		ui.NewRow(.6, procs),
-	)
+	grid = gp.Define(flags, grid)
 
 	ui.Render(grid)
 

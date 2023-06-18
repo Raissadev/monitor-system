@@ -1,6 +1,7 @@
 package sys
 
 import (
+	"math"
 	"runtime"
 	"time"
 
@@ -40,7 +41,7 @@ func (c *CPU) update() int {
 
 	totalΔ := float64(total - c.pTotal)
 	idleΔ := float64(idle - c.pIdle)
-	percent := (1.0 - idleΔ/totalΔ) * 100
+	percent := math.Abs(1.0-idleΔ/totalΔ) * 100
 
 	return int(percent)
 }

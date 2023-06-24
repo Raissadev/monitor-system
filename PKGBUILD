@@ -1,22 +1,29 @@
+# Maintainer: Raissa Arcaro Daros <raissa.geek@gmail.com>
+
 pkgname=kenbunshoku-haki
 pkgver=1.1
 pkgrel=1
 pkgdesc="Monitor system"
 arch=(x86_64)
-maintainer="Raissa Arcaro Daros <raissa.geek@gmail.com>"
 url="https://github.com/Raissadev/monitor-system"
 license=(GPL3)
-depends=('go' 'libcaca')
-
-source=("https://github.com/Raissadev/monitor-system/releases/download/v$pkgver/kenbunshoku-haki-$pkgver.tar.gz")
-sha256sums=('55da8c3e967190c44bada09d57221b9e6e15614244795d208fd5a1b82ed0120d')
+depends=(glibc)
+makedepends=(go)
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/Raissadev/monitor-system/archive/refs/tags/v${pkgver}.tar.gz")
+sha256sums=('3cc3f94faa54d814e91a0b8e5d6dc76b3caaf727658fb17bef831b99166206ee')
 
 build() {
-    cd ..
-    go build -o "$srcdir/bin/kenbunshoku-haki"
+  cd "monitor-system-${pkgver}"
+  go build \
+    -trimpath \
+    -buildmode=pie \
+    -mod=readonly \
+    -modcacherw \
+    -ldflags "-linkmode external -extldflags \"${LDFLAGS}\"" \
+    .
 }
 
 package() {
-    sudo install -Dm755 "$srcdir/bin/kenbunshoku-haki" "/usr/bin/kenbunshoku-haki"
-    img2txt "$srcdir/../etc/mug.png"
+  cd "monitor-system-${pkgver}"
+  install -D system "${pkgdir}/usr/bin/kenbunshoku-haki"
 }
